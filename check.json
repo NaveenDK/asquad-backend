@@ -1,0 +1,65 @@
+{
+  "_id": "635c28838071a2489c2343d6",
+  "startDate": "2022-10-28T19:06:33.523Z",
+  "endDate": "2022-10-28T19:06:33.523Z",
+  "users": [
+    {
+      "firstName": "Naveen",
+      "lastName": "Ko",
+      "goals": [
+        {
+          "mainGoal": "Loose 10kg",
+          "progress": 0,
+          "subTasks": [
+            {
+              "task": "Work like hell",
+              "done": false,
+              "_id": "635c28838071a2489c2343d9"
+            },
+            {
+              "task": "work like hell2",
+              "done": false,
+              "_id": "635c28838071a2489c2343da"
+            }
+          ],
+          "_id": "635c28838071a2489c2343d8"
+        },
+        {
+          "mainGoal": "True",
+          "progress": 0,
+          "subTasks": [
+            {
+              "task": "subtask1",
+              "done": false,
+              "_id": "635c28838071a2489c2343dc"
+            }
+          ],
+          "_id": "635c28838071a2489c2343db"
+        }
+      ],
+      "_id": "635c28838071a2489c2343d7"
+    },
+    {
+      "firstName": "Jim",
+      "lastName": "Halpert",
+      "goals": [
+        {
+          "mainGoal": "Read book",
+          "progress": 0,
+          "subTasks": [
+            {
+              "task": "Interrupt thoughts",
+              "done": false,
+              "_id": "635c28838071a2489c2343df"
+            }
+          ],
+          "_id": "635c28838071a2489c2343de"
+        }
+      ],
+      "_id": "635c28838071a2489c2343dd"
+    }
+  ],
+  "createdAt": "2022-10-28T19:07:47.649Z",
+  "updatedAt": "2022-10-28T19:07:47.649Z",
+  "__v": 0
+}

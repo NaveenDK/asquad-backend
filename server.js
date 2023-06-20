@@ -29,8 +29,8 @@ const adminsRouter = require("./routes/admins");
 
 app.use("/admins", adminsRouter);
 
-const authRouter = require("./routes/auth");
-app.use("/auth", authRouter);
+// const authRouter = require("./routes/auth");
+// app.use("/auth", authRouter);
 
 ///---------deployment --------------------------
 

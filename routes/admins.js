@@ -34,7 +34,7 @@ router.post(
       let admin = await Admin.findOne({ email });
 
       if (admin) {
-        return res.status(400).json({ msg: "Admin already exists" });
+        return res.status(400).json({ error: "Email already registered" });
       }
 
       admin = new Admin({

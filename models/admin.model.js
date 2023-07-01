@@ -22,6 +22,18 @@ const adminSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  verifytoken: {
+    type: String,
+  },
+
   cycles: [
     {
       startDate: { type: Date, required: true },

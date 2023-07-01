@@ -6,6 +6,16 @@ const Admin = require("../models/admin.model.js");
 var bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const nodemailer = require("nodemailer");
+
+// email config
+var password = process.env.PASSWORD;
+
+//var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+var transporter = nodemailer.createTransport(
+  "smtps://teamasquad3%40gmail.com:" + password + "@smtp.gmail.com"
+);
+
 //@route POST api/admins
 //@desc Register an admin
 //@access Public
@@ -73,6 +83,87 @@ router.post(
     }
   }
 );
+
+//@route POST api/admins/reset-password
+//@desc
+//@access Public
+// send email Link For reset Password
+router.post("/sendpasswordlink", async (req, res) => {
+  console.log(req.body);
+
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(401).json({ status: 401, message: "Enter Your Email" });
+  }
+
+  try {
+    const userfind = await Admin.findOne({ email: email });
+    console.log("userfind" + userfind);
+    // token generate for reset password
+    const token = jwt.sign({ _id: userfind._id }, config.get("jwtSecret"), {
+      expiresIn: "3200s",
+    });
+    console.log("token " + token);
+    const setusertoken = await Admin.findByIdAndUpdate(
+      { _id: userfind._id },
+      { verifytoken: token },
+      { new: true }
+    );
+    console.log("setusertoken  " + setusertoken);
+    if (setusertoken) {
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Sending Email For password Reset",
+        text: `This Link Valid For 2 MINUTES http://localhost:3001/changepwd/${userfind.id}/${setusertoken.verifytoken}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("error", error);
+          res.status(401).json({ status: 401, message: "email not send" });
+        } else {
+          console.log("Email sent", info.response);
+          res
+            .status(201)
+            .json({ status: 201, message: "Email sent Succsfully" });
+        }
+      });
+    }
+  } catch (error) {
+    res.status(401).json({ status: 401, message: "invalid user" });
+  }
+});
+
+router.post("/:id/:token", async (req, res) => {
+  const { id, token } = req.params;
+
+  const { password } = req.body;
+  console.log("password: " + password);
+
+  try {
+    const validuser = await Admin.findOne({ _id: id });
+    console.log("validuser+ " + validuser);
+    const verifyToken = jwt.verify(token, config.get("jwtSecret"));
+
+    if (validuser && verifyToken._id) {
+      const newpassword = await bcrypt.hash(password, 12);
+
+      const setnewuserpass = await Admin.findByIdAndUpdate(
+        { _id: id },
+        { password: newpassword }
+      );
+
+      setnewuserpass.save();
+      res.status(201).json({ status: 201, setnewuserpass });
+    } else {
+      res.status(401).json({ status: 401, message: "user not exist" });
+    }
+  } catch (error) {
+    res.status(401).json({ status: 401, error });
+  }
+});
 
 //@route POST api/admins/login
 //@desc Login an admin
@@ -259,3 +350,55 @@ router.put("/:adminId/cycles/:cycleId", auth, async (req, res) => {
   }
 });
 module.exports = router;
+
+//@route POST api/admins/reset-password
+//@desc
+//@access Public
+// send email Link For reset Password
+router.post("/sendpasswordlink", async (req, res) => {
+  console.log(req.body);
+
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(401).json({ status: 401, message: "Enter Your Email" });
+  }
+
+  try {
+    const userfind = await Admin.findOne({ email: email });
+    console.log("userfind" + userfind);
+    // token generate for reset password
+    const token = jwt.sign({ _id: userfind._id }, config.get("jwtSecret"), {
+      expiresIn: "120s",
+    });
+
+    const setusertoken = await Admin.findByIdAndUpdate(
+      { _id: userfind._id },
+      { verifytoken: token },
+      { new: true }
+    );
+
+    if (setusertoken) {
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Sending Email For password Reset",
+        text: `This Link Valid For 2 MINUTES http://localhost:3001/forgotpassword/${userfind.id}/${setusertoken.verifytoken}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("error", error);
+          res.status(401).json({ status: 401, message: "email not send" });
+        } else {
+          console.log("Email sent", info.response);
+          res
+            .status(201)
+            .json({ status: 201, message: "Email sent Succsfully" });
+        }
+      });
+    }
+  } catch (error) {
+    res.status(401).json({ status: 401, message: "invalid user" });
+  }
+});

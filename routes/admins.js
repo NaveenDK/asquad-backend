@@ -248,6 +248,26 @@ router.post("/:adminId", auth, async (req, res) => {
   }
 });
 
+// GET route to get admin depending on id
+router.get("/:adminId", auth, async (req, res) => {
+  try {
+    const { adminId } = req.params;
+
+    const admin = await Admin.findById(adminId);
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const name = admin.name;
+
+    res.status(200).json(name); // Return the cycles in the response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // GET route to retrieve all cycles for a specific admin
 router.get("/:adminId/cycles", auth, async (req, res) => {
   try {

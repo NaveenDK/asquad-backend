@@ -7,7 +7,7 @@ var bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const nodemailer = require("nodemailer");
-
+const { OAuth2Client } = require("google-auth-library");
 // email config
 var password = process.env.PASSWORD;
 
@@ -16,6 +16,51 @@ var transporter = nodemailer.createTransport(
   "smtps://teamasquad3%40gmail.com:" + password + "@smtp.gmail.com"
 );
 
+//Google login - onetap
+router.post("/google-login", async (req, res) => {
+  console.log("google-login api hit");
+  const { token } = req.body;
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+  });
+
+  const { name, email } = ticket.getPayload();
+  try {
+    let admin = await Admin.findOne({ email });
+
+    if (admin) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
+    admin = new Admin({
+      name,
+      email,
+    });
+
+    await admin.save();
+    const payload = {
+      admin: {
+        id: admin.id,
+      },
+    };
+
+    jwt.sign(
+      payload,
+      config.get("jwtSecret"),
+      {
+        expiresIn: 360000,
+      },
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token, adminId: admin._id });
+      }
+    );
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 //@route POST api/admins
 //@desc Register an admin
 //@access Public
@@ -135,6 +180,10 @@ router.post("/sendpasswordlink", async (req, res) => {
     res.status(401).json({ status: 401, message: "invalid user" });
   }
 });
+
+const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
+//Post user
 
 router.post("/:id/:token", async (req, res) => {
   const { id, token } = req.params;

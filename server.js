@@ -20,7 +20,7 @@ mongoose.connect(uri, { useNewUrlParser: true });
 const connection = mongoose.connection;
 
 connection.once("open", () => {
-  console.log("mongodb db connection established");
+  console.log("mongodb db connection established!!");
 });
 
 const cyclesRouter = require("./routes/cycles");

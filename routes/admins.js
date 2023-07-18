@@ -2,12 +2,14 @@ const { check, validationResult } = require("express-validator");
 
 const router = require("express").Router();
 const auth = require("../middleware/auth");
+const axios = require("axios")
 const Admin = require("../models/admin.model.js");
 var bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const nodemailer = require("nodemailer");
-const { OAuth2Client } = require("google-auth-library");
+const {OAuth2Client}  = require('google-auth-library')
+ 
 // email config
 var password = process.env.PASSWORD;
 
@@ -16,50 +18,117 @@ var transporter = nodemailer.createTransport(
   "smtps://teamasquad3%40gmail.com:" + password + "@smtp.gmail.com"
 );
 
-//Google login - onetap
-router.post("/google-login", async (req, res) => {
-  console.log("google-login api hit");
-  const { token } = req.body;
+
+
+async function verify(client_id, jwtToken) {
+  const client = new OAuth2Client(client_id);
+  // Call the verifyIdToken to
+  // varify and decode it
   const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+      idToken: jwtToken,
+      audience: client_id,
   });
+  // Get the JSON with all the user info
+  const payload = ticket.getPayload();
+  // This is a JSON object that contains
+  // all the user info
+  ///console.log("payload: " + JSON.stringify(payload))
+  return payload;
+}
 
-  const { name, email } = ticket.getPayload();
-  try {
-    let admin = await Admin.findOne({ email });
+//Google - login
+router.post("/google-login", async (req, res) => {
 
-    if (admin) {
-      return res.status(400).json({ error: "Email already registered" });
-    }
+  if (req.body.response) {
+    const {response} = req.body;
+  // console.log("I am here and got the token right: " + JSON.stringify(response))
+   verify(response.clientId,response.credential).then(async x=>{
+   // console.log("this is x: " + JSON.stringify(x))
+    const email = x.email;
+    const existingUser = await Admin.findOne({email})
 
-    admin = new Admin({
-      name,
-      email,
-    });
+    console.log("existing User: " + existingUser)
+            if (!existingUser) {
+              return res.status(400).json({message: "User doesn't exist"})
+            }
+            const payload = {
+              admin: {
+                _id: existingUser._id,
+              },
+            };
+      
+            jwt.sign(
+              payload,
+              config.get("jwtSecret"),
+              {
+                expiresIn: 360000,
+              },
+              (err, token) => {
+                if (err) throw err;
+                res.status(200).json({ token, adminId: existingUser._id });
+              }
+            );
+        })
+        .catch(err => {
+            res
+                .status(400)
+                .json({message: "Invalid access token!"})
+        })
+ 
+} else {
+  console.log("nothing happens")
+}
+  
+});
 
-    await admin.save();
-    const payload = {
-      admin: {
-        id: admin.id,
-      },
-    };
 
-    jwt.sign(
-      payload,
-      config.get("jwtSecret"),
-      {
-        expiresIn: 360000,
-      },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token, adminId: admin._id });
-      }
-    );
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Server Error");
-  }
+
+//Google register
+router.post("/google-register", async (req, res) => {
+
+  if (req.body.response) {
+    const {response} = req.body;
+   
+   verify(response.clientId,response.credential).then(async x=>{
+    const email = x.email;
+    const name=x.name;
+    const existingUser = await Admin.findOne({email})
+    
+            if (existingUser) {
+
+              return res.status(400).json({message: "User already exist!"})
+
+            }
+            const admin = await Admin.create({ email, name})
+         
+            const payload = {
+              admin: {
+                _id: admin._id,
+              },
+            };
+      
+            jwt.sign(
+              payload,
+              config.get("jwtSecret"),
+              {
+                expiresIn: 360000,
+              },
+              (err, token) => {
+                if (err) throw err;
+                res.status(200).json({ token, adminId: admin._id });
+              }
+            );
+        })
+        .catch(err => {
+            res
+                .status(400)
+                .json({message: "Invalid access token!"})
+        })
+ 
+} else {
+  console.log("nothing happens")
+}
+  
 });
 //@route POST api/admins
 //@desc Register an admin
@@ -181,7 +250,7 @@ router.post("/sendpasswordlink", async (req, res) => {
   }
 });
 
-const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
 
 //Post user
 

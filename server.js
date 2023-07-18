@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const path = require("path");
-const { OAuth2Client } = require("google-auth-library");
+ 
 
 require("dotenv").config();
 
@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 
-const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+ 
 app.use(express.json());
 
 const uri = process.env.ATLAS_URI;

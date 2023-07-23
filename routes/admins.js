@@ -83,6 +83,99 @@ router.post("/google-login", async (req, res) => {
 
 
 
+//google login - custom btn
+router.post("/google-login-custom-btn", async (req, res) => {
+
+  
+  const {response} = req.body;
+  
+
+ const googleAccessToken=response.access_token
+
+  axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+  headers: {
+      "Authorization": `Bearer ${googleAccessToken}`
+  }
+})
+  .then(async response2 => {
+      
+      const email = response2.data.email;
+      const name = response2.data.given_name;
+  
+
+      const existingUser = await Admin.findOne({email})
+   
+      if (!existingUser) 
+          return res.status(400).json({message: "User doesn't exist!"})
+
+       
+
+      const token = jwt.sign({
+         
+          _id: existingUser._id
+      }, config.get("jwtSecret"), {expiresIn: "1h"})
+
+      res
+          .status(200)
+          .json({adminId:existingUser._id, token})
+  })
+  .catch(err => {
+      res
+          .status(400)
+          .json({message: "Invalid access token!"})
+  })
+
+});
+
+
+
+
+//Google register
+router.post("/google-register-custom-btn", async (req, res) => {
+
+  
+    const {response} = req.body;
+
+
+   const googleAccessToken=response.access_token
+   
+    axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: {
+        "Authorization": `Bearer ${googleAccessToken}`
+    }
+})
+    .then(async response2 => {
+          
+        const email = response2.data.email;
+        const name = response2.data.given_name;
+        
+
+        const existingUser = await Admin.findOne({email})
+     
+        if (existingUser) 
+            return res.status(400).json({message: "User already exist!"})
+
+        const result = await Admin.create({email,name})
+
+        const token = jwt.sign({
+           
+            _id: result._id
+        }, config.get("jwtSecret"), {expiresIn: "1h"})
+
+        res
+            .status(200)
+            .json({adminId:result._id, token})
+    })
+    .catch(err => {
+        res
+            .status(400)
+            .json({message: "Invalid access token!"})
+    })
+  
+});
+
+
+
 //Google register
 router.post("/google-register", async (req, res) => {
 

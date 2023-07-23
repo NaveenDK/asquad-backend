@@ -12,11 +12,11 @@ const adminSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: false,
   },
   confirmpassword: {
     type: String,
-    required: true,
+    required: false,
   },
   date: {
     type: Date,

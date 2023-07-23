@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const path = require("path");
+ 
 
 require("dotenv").config();
 
@@ -10,6 +11,7 @@ const port = process.env.PORT || 5001;
 
 app.use(cors());
 
+ 
 app.use(express.json());
 
 const uri = process.env.ATLAS_URI;
@@ -18,7 +20,7 @@ mongoose.connect(uri, { useNewUrlParser: true });
 const connection = mongoose.connection;
 
 connection.once("open", () => {
-  console.log("mongodb db connection established");
+  console.log("mongodb db connection established!!");
 });
 
 const cyclesRouter = require("./routes/cycles");

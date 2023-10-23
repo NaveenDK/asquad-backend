@@ -8,7 +8,10 @@ const GoalSchema = mongoose.Schema({
   subtasks: [
     {
       subtaskName: String,
-      isCompleted: Boolean,
+      isCompleted: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
 });

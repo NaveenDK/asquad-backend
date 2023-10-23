@@ -7,9 +7,10 @@ const { logger } = require("./middleware/logger");
 require("dotenv").config();
 const errorHandler = require("./middleware/errorHandler");
 const { error } = require("console");
-
+const connectDB = require("./config/dbConn");
 const app = express();
 const port = process.env.PORT || 3000;
+const { logEvents } = require("./middleware/logger");
 
 // app.use(cors());
 app.use(logger);
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use("/", express.static(path.join(__dirname, "/public")));
 app.use("/", require("./routes/root"));
+app.use("/users", require("./routes/userRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);
@@ -31,42 +33,20 @@ app.all("*", (req, res) => {
 });
 
 app.use(errorHandler);
-// const uri = process.env.ATLAS_URI;
-// mongoose.connect(uri, { useNewUrlParser: true });
 
-// const connection = mongoose.connection;
+connectDB();
 
-// connection.once("open", () => {
-//   console.log("mongodb db connection established!!");
-// });
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
+  app.listen(port, () => {
+    console.log(`Server is running on port: ${port}`);
+  });
+});
 
-// const cyclesRouter = require("./routes/cycles");
-
-// app.use("/cycles", cyclesRouter);
-
-// const adminsRouter = require("./routes/admins");
-
-// app.use("/admins", adminsRouter);
-
-// const authRouter = require("./routes/auth");
-// app.use("/auth", authRouter);
-
-///---------deployment --------------------------
-
-// __dirname = path.resolve();
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "/frontend/build")));
-
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-//   });
-// } else {
-//   app.get("/", (req, res) => {
-//     res.send("API is running..");
-//   });
-// }
-///---------deployment --------------------------
-
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
+mongoose.connection.on("error", (err) => {
+  console.log(err);
+  logEvents(
+    `${err.no}:${err.code}\t${err.syscall}\t${err.hostname}`,
+    "mongoErrLog.log"
+  );
 });

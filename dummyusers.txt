@@ -1,0 +1,110 @@
+[
+    {
+        "_id": "6535bed331c787191d44090f",
+        "name": "nav",
+        "email": "test@test.com",
+        "date": "2023-10-23T00:31:15.659Z",
+        "tokens": [],
+        "__v": 0
+    },
+    {
+        "_id": "6535bff7a84fb5204d8c8285",
+        "name": "timfeerris",
+        "email": "test331144@test.com",
+        "date": "2023-10-23T00:36:07.493Z",
+        "tokens": [],
+        "__v": 0
+    },
+    {
+        "_id": "6538cccf3ecb9b97d63d65b6",
+        "name": "lexfredman",
+        "email": "lex@lex.com",
+        "date": "2023-10-25T08:07:43.898Z",
+        "tokens": [],
+        "__v": 0
+    },
+    {
+        "_id": "6538cd0d3ecb9b97d63d65b9",
+        "name": "elon_m",
+        "email": "eln@lex.com",
+        "date": "2023-10-25T08:08:45.536Z",
+        "tokens": [],
+        "__v": 0
+    },
+    {
+        "_id": "6538cd283ecb9b97d63d65bc",
+        "name": "James Clear",
+        "email": "james@james.com",
+        "date": "2023-10-25T08:09:12.299Z",
+        "tokens": [],
+        "__v": 0
+    },
+    {
+        "_id": "6538cd3a3ecb9b97d63d65bf",
+        "name": "CalNew",
+        "email": "cal@new.com",
+        "date": "2023-10-25T08:09:30.157Z",
+        "tokens": [],
+        "__v": 0
+    }
+]
+
+
+----
+Group 1
+
+{
+    "users":["6535bed331c787191d44090f","6535bff7a84fb5204d8c8285","6538cccf3ecb9b97d63d65b6"],
+    "creatorId":"6535bed331c787191d44090f",
+    "category":"test-category",
+    "description": "test-description",
+    "groupname":"group 1"
+}
+
+Group 2
+
+{
+    "users":["6535bed331c787191d44090f","6535bff7a84fb5204d8c8285","6538cccf3ecb9b97d63d65b6","6538cd3a3ecb9b97d63d65bf"],
+    "creatorId":"6538cd283ecb9b97d63d65bc",
+    "category":"test-category",
+    "description": "test-description",
+    "groupname":"group 2"
+}
+
+
+Group 2
+
+{
+    "users":["6535bed331c787191d44090f","6535bff7a84fb5204d8c8285","6538cccf3ecb9b97d63d65b6","6538cd3a3ecb9b97d63d65bf"],
+    "creatorId":"6538cd283ecb9b97d63d65bc",
+    "category":"test-category",
+    "description": "test-description",
+    "groupname":"group 2"
+}
+
+
+
+Group 3
+{
+    "users":["6535bed331c787191d44090f","6535bff7a84fb5204d8c8285","6538cccf3ecb9b97d63d65b6","6538cd3a3ecb9b97d63d65bf"],
+    "creatorId":"6539119a06db97a8df910309",
+    "category":"test-category",
+    "description": "test-description",
+    "groupname":"group 3"
+}
+
+Group 3
+{
+    "users":["6535bed331c787191d44090f","6535bff7a84fb5204d8c8285","6538cccf3ecb9b97d63d65b6","6538cd3a3ecb9b97d63d65bf"],
+    "creatorId":"6539119a06db97a8df910309",
+    "categories":[{
+        "id":"ebe231da-c9f6-48ee-ada8-10c8bc754994",
+        "label":"frrrr1"
+    },{
+        "id":"ebe231da-c9f6-48ee-ada8-10c8bc754996",
+        "label":"frrrr2"
+    }],
+    "description": "test-description",
+    "groupname":"group 3"
+}
+

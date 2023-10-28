@@ -23,4 +23,6 @@ router
   .route("/:userId/uc-groups")
   .get(auth, usersController.getUserCreatedGroups);
 
+router.route("/:userId/my-groups").get(auth, usersController.getAllMyGroups);
+
 module.exports = router;

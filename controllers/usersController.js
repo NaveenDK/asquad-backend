@@ -244,6 +244,28 @@ const getUserCreatedGroups = asyncHandler(async (req, res) => {
   }
 });
 
+const getAllMyGroups = asyncHandler(async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    console.log("userId", userId);
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const allgroups = await Group.find({ users: userId });
+
+    // const name = user.name;
+
+    res.status(200).json(allgroups); // Return the cycles in the response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = {
   getAllUsers,
   createNewUser,
@@ -253,4 +275,5 @@ module.exports = {
   getUser,
   googleLogin,
   getUserCreatedGroups,
+  getAllMyGroups,
 };

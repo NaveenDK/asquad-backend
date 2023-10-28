@@ -42,7 +42,105 @@ const getAllGroups = asyncHandler(async (req, res) => {
   res.json(groups);
 });
 
+const getGroupDetails = asyncHandler(async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    res.status(200).json(group);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+const joinGroup = asyncHandler(async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    const group = await Group.findById(groupId);
+    const userId = req.query.userId;
+    console.log("userId is : ");
+    console.log(userId);
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+    if (group.users.includes(userId)) {
+      return res
+        .status(400)
+        .json({ error: "User is already a member of this group" });
+    }
+
+    Group.findByIdAndUpdate(
+      groupId, // Group ID
+      { $push: { users: userId } }, // Add the userId to the 'users' array
+      { new: true }, // This option ensures that the updated document is returned
+      (error, updatedGroup) => {
+        if (error) {
+          console.error("Error adding user to group:", error);
+        } else {
+          console.log("User added to group:", updatedGroup);
+          // You can send a response here or perform any other necessary actions
+          res.status(200).json({
+            message: "User added to the group successfully",
+            group: updatedGroup,
+          });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+const leaveGroup = asyncHandler(async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.query.userId;
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    if (!group.users.includes(userId)) {
+      return res
+        .status(400)
+        .json({ error: "User is not a member of this group" });
+    }
+
+    Group.findByIdAndUpdate(
+      groupId,
+      { $pull: { users: userId } }, // Use $pull to remove the userId from the 'users' array
+      { new: true },
+      (error, updatedGroup) => {
+        if (error) {
+          console.error("Error removing user from group:", error);
+        } else {
+          console.log("User removed from group:", updatedGroup);
+          res.status(200).json({
+            message: "User removed from the group successfully",
+            group: updatedGroup,
+          });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
 module.exports = {
   createNewGroup,
   getAllGroups,
+  getGroupDetails,
+  joinGroup,
+  leaveGroup,
 };

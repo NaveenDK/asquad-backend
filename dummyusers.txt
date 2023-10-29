@@ -107,4 +107,4 @@ Group 3
     "description": "test-description",
     "groupname":"group 3"
 }
-
+http://localhost:3000/groups/653c3bc1605d7482a53ad93b/join?userId=6539119a06db97a8df910309

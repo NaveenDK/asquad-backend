@@ -10,6 +10,6 @@ router
   .get(groupsController.getAllGroups);
 
 router.route("/:groupId").get(auth, groupsController.getGroupDetails);
-router.route("/:groupId/join").post(auth, groupsController.joinGroup);
-router.route("/:groupId/leave").post(auth, groupsController.leaveGroup);
+router.route("/:groupId/join").put(auth, groupsController.joinGroup);
+router.route("/:groupId/leave").put(auth, groupsController.leaveGroup);
 module.exports = router;

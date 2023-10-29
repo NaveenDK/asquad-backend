@@ -62,9 +62,10 @@ const getGroupDetails = asyncHandler(async (req, res) => {
 const joinGroup = asyncHandler(async (req, res) => {
   try {
     const { groupId } = req.params;
+    const { userId } = req.body;
 
     const group = await Group.findById(groupId);
-    const userId = req.query.userId;
+
     console.log("userId is : ");
     console.log(userId);
     if (!group) {
@@ -101,7 +102,7 @@ const joinGroup = asyncHandler(async (req, res) => {
 const leaveGroup = asyncHandler(async (req, res) => {
   try {
     const { groupId } = req.params;
-    const userId = req.query.userId;
+    const { userId } = req.body;
 
     const group = await Group.findById(groupId);
 

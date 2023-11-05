@@ -12,4 +12,5 @@ router
 router.route("/:groupId").get(auth, groupsController.getGroupDetails);
 router.route("/:groupId/join").put(auth, groupsController.joinGroup);
 router.route("/:groupId/leave").put(auth, groupsController.leaveGroup);
+router.route("/delete").post(auth, groupsController.deleteGroup);
 module.exports = router;

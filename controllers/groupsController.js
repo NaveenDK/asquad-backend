@@ -138,7 +138,41 @@ const leaveGroup = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteGroup = asyncHandler(async (req, res) => {
+  try {
+    const { groupId, userId } = req.body;
+    const groups = await Group.find({ creatorId: userId });
+
+    function getGroupById(groupId) {
+      for (const group of groups) {
+        if (group._id.toString() === groupId.toString()) {
+          return group; // Return the group that matches the groupId
+        }
+      }
+
+      return null; // Return null if no matching group is found
+    }
+
+    const foundGroup = getGroupById(groupId);
+
+    if (foundGroup.creatorId.toString() == userId) {
+      try {
+        // groups.deleteOne({ groupId: groupId });
+
+        Group.find({ _id: groupId }).remove().exec();
+
+        res.json({ msg: "successfully deleted" });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = {
+  deleteGroup,
   createNewGroup,
   getAllGroups,
   getGroupDetails,

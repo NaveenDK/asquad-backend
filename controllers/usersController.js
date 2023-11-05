@@ -266,6 +266,30 @@ const getAllMyGroups = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteUserOwnedGroup = asyncHandler(async (req, res) => {
+  try {
+    const { groupId, userId } = req.params;
+
+    console.log();
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    db.groups.find({
+      $where: function () {
+        return this.groupId == groupId;
+      },
+    });
+
+    console.log();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = {
   getAllUsers,
   createNewUser,

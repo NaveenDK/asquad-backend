@@ -171,6 +171,34 @@ const deleteGroup = asyncHandler(async (req, res) => {
   }
 });
 
+const getAllMembers = asyncHandler(async (req, res) => {
+  const { userId, groupId } = req.body;
+
+  try {
+    // Find the group by ID and populate the 'users' field
+    const group = await Group.findById(groupId).populate("users");
+
+    // Check if the group exists
+    if (!group) {
+      console.log("Group not found");
+      return null;
+    }
+
+    // Access the users array in the populated group object
+    const usersInGroup = group.users;
+
+    // Log or return the users in the group
+    console.log("Users in the group:", usersInGroup);
+
+    // You can also return the users array if needed
+    // console.log(usersInGroup);
+    return usersInGroup;
+  } catch (error) {
+    console.error("Error fetching users in group:", error);
+    throw error;
+  }
+});
+
 module.exports = {
   deleteGroup,
   createNewGroup,
@@ -178,4 +206,5 @@ module.exports = {
   getGroupDetails,
   joinGroup,
   leaveGroup,
+  getAllMembers,
 };

@@ -27,7 +27,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 const googleRegister = asyncHandler(async (req, res) => {
   const { response } = req.body;
-  console.log("helloworld");
+  //console.log("helloworld");
 
   //console.log(req.body);
   const googleAccessToken = response.access_token;
@@ -38,21 +38,29 @@ const googleRegister = asyncHandler(async (req, res) => {
         Authorization: `Bearer ${googleAccessToken}`,
       },
     })
-    .then(async (response2) => {
-      // console.log(JSON.stringify(response2));
+    .then(async (response) => {
+      // console.log(JSON.stringify(response));
 
-      const email = response2.data.email;
-      const name = response2.data.given_name;
+      const email = response.data.email;
+      const name = response.data.given_name;
 
       const existingUser = await User.findOne({ email });
 
-      if (existingUser)
-        return res.status(400).json({ message: "User already exist!" });
+      if (existingUser) {
+        console.log("User already exists!");
+        return res.status(400).json({ message: "User already exists!" });
+      }
+      console.log("it looks like its here");
+      console.log("User does not exist. Creating...");
 
       const result = await User.create({ email, name });
+      console.log("User created:", result);
+
+      //   const result = await User.create({ email, name });
       console.log("result");
 
       console.log(result);
+
       const token = jwt.sign(
         {
           _id: result._id,
@@ -64,6 +72,9 @@ const googleRegister = asyncHandler(async (req, res) => {
       res.status(200).json({ userId: result._id, token });
     })
     .catch((err) => {
+      // console.error(err.response.data);
+      console.error("Error from Google API:", err);
+      console.log(err);
       res.status(400).json({ message: "Invalid access token!" });
     });
 });

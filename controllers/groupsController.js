@@ -172,7 +172,8 @@ const deleteGroup = asyncHandler(async (req, res) => {
 });
 
 const getAllMembers = asyncHandler(async (req, res) => {
-  const { userId, groupId } = req.body;
+  //const { userId, groupId } = req.body;
+  const { groupId } = req.params;
 
   try {
     // Find the group by ID and populate the 'users' field
@@ -189,10 +190,14 @@ const getAllMembers = asyncHandler(async (req, res) => {
 
     // Log or return the users in the group
     console.log("Users in the group:", usersInGroup);
-
+    let memberNames = usersInGroup
+      .map((obj) => obj["name"])
+      .filter((value) => value !== undefined);
+    console.log(memberNames);
     // You can also return the users array if needed
     // console.log(usersInGroup);
-    return usersInGroup;
+    res.status(200).json(memberNames);
+    // return usersInGroup;
   } catch (error) {
     console.error("Error fetching users in group:", error);
     throw error;

@@ -9,7 +9,7 @@ router
   .post(groupsController.createNewGroup)
   .get(groupsController.getAllGroups);
 
-router.route("/users").get(groupsController.getAllMembers);
+router.route("/:groupId/users").get(groupsController.getAllMembers);
 
 router.route("/:groupId").get(auth, groupsController.getGroupDetails);
 router.route("/:groupId/join").put(auth, groupsController.joinGroup);
